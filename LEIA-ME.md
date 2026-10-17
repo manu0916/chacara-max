@@ -41,7 +41,16 @@ npm run deploy
 
 O comando de deploy gera `dist/` antes de publicar. Para upload manual pelo painel, execute `npm run build` e envie o conteúdo inteiro de `dist/`. Verifique que `index.html`, `password-field.css`, `password-field.js`, `_worker.js` e `_routes.json` estão na raiz do upload. Não envie o código-fonte de `functions/` como se já estivesse compilado.
 
-O repositório tem um workflow de verificação. O envio ao GitHub por si só não publica o domínio Pages existente; a publicação é feita com Wrangler ou uma integração de deploy configurada pelo proprietário.
+## Publicação automática no mesmo Pages
+
+O Pages existente foi criado por Direct Upload, e o Cloudflare não permite converter sua origem para a integração Git nativa. O workflow `Verificar e publicar no Cloudflare` publica pelo Wrangler no projeto `chacara-max`, mantendo o endereço `chacara-max.pages.dev`.
+
+Para ativar, crie um token Cloudflare com a permissão **Account → Cloudflare Pages → Edit**, limitado à conta **Cogdev**. No GitHub, abra **Settings → Secrets and variables → Actions → New repository secret** e salve-o como **CLOUDFLARE_API_TOKEN**. Nunca inclua o valor no código ou em mensagens.
+
+Depois execute o workflow em **Actions → Verificar e publicar no Cloudflare → Run workflow**. As próximas alterações na branch `main` serão verificadas, compiladas e publicadas automaticamente. Pull requests executam somente as verificações e o build.
+
+Sem o segredo, o workflow informa **Publicação pendente** e disponibiliza o pacote completo `chacara-max-pages-upload` como artefato. O deploy não é executado. Os segredos do admin e o binding D1 continuam no Cloudflare.
+
 
 ## Senha e demonstração
 

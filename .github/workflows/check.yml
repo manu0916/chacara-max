@@ -1,12 +1,21 @@
-name: Verificar projeto
-on: [push, pull_request]
+name: Verificar e publicar no Cloudflare
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: chacara-max-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
-  check:
+  check-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -15,3 +24,31 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npm run build
+      - name: Guardar pacote completo do Pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: chacara-max-pages-upload
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Verificar credencial de publicação
+        id: cloudflare
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          if [[ -n "$CLOUDFLARE_API_TOKEN" ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deploy pendente: cadastre CLOUDFLARE_API_TOKEN nos segredos Actions do repositório."
+            echo "### Publicação pendente" >> "$GITHUB_STEP_SUMMARY"
+            echo "O build passou e o pacote está nos artefatos. Cadastre o segredo Actions CLOUDFLARE_API_TOKEN com permissão Cloudflare Pages Edit na conta Cogdev e execute este workflow novamente." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Publicar no Pages existente
+        if: steps.cloudflare.outputs.ready == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: a802d8fa0e93d6c11433c74a89545d7e
+        run: ./node_modules/.bin/wrangler pages deploy dist --project-name chacara-max --branch main
