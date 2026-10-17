@@ -1,0 +1,10 @@
+name = "chacara-max"
+account_id = "a802d8fa0e93d6c11433c74a89545d7e"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "chacara-max-catalogo"
+database_id = "4cebac0c-4287-4107-a581-0bad7e3bdfa4"
+migrations_dir = "migrations"

@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS products (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  price_cents INTEGER NOT NULL CHECK(price_cents >= 0),
+  category TEXT NOT NULL,
+  image TEXT NOT NULL DEFAULT '',
+  badge TEXT NOT NULL DEFAULT '',
+  featured INTEGER NOT NULL DEFAULT 0,
+  available INTEGER NOT NULL DEFAULT 1,
+  vegetarian INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  revision INTEGER NOT NULL DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS settings (
+  id INTEGER PRIMARY KEY CHECK(id = 1),
+  value TEXT NOT NULL,
+  revision INTEGER NOT NULL DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS login_attempts (
+  ip_key TEXT PRIMARY KEY,
+  attempts INTEGER NOT NULL,
+  window_start INTEGER NOT NULL
+);

@@ -1,0 +1,16 @@
+{
+  "name": "chacara-max-pizzaria",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name chacara-max --branch main",
+    "test": "node --test tests/*.test.js",
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.149.0"
+  }
+}
