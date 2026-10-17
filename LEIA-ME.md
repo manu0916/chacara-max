@@ -22,7 +22,7 @@ npm run dev
 
 ## Publicar no Cloudflare existente
 
-O projeto Pages é `chacara-max`. O binding D1 chama-se `DB`; a conta e o banco existentes estão definidos em `wrangler.toml`. Mantenha esse banco para preservar os produtos, contatos e configurações já cadastrados.
+O projeto Pages é `chacara-max`. O binding D1 chama-se `DB`; o banco existente está definido em `wrangler.toml`. Mantenha esse banco para preservar os produtos, contatos e configurações já cadastrados.
 
 Os segredos de produção necessários são `ADMIN_PASSWORD` e `SESSION_SECRET`. Se já estiverem cadastrados no Pages, preserve os valores. Caso esteja preparando uma nova instalação, cadastre-os pelo painel ou pelos prompts seguros:
 
@@ -41,15 +41,18 @@ npm run deploy
 
 O comando de deploy gera `dist/` antes de publicar. Para upload manual pelo painel, execute `npm run build` e envie o conteúdo inteiro de `dist/`. Verifique que `index.html`, `password-field.css`, `password-field.js`, `_worker.js` e `_routes.json` estão na raiz do upload. Não envie o código-fonte de `functions/` como se já estivesse compilado.
 
-## Publicação automática no mesmo Pages
+## Publicação automática pelo Cloudflare Pages
 
-O Pages existente foi criado por Direct Upload, e o Cloudflare não permite converter sua origem para a integração Git nativa. O workflow `Verificar e publicar no Cloudflare` publica pelo Wrangler no projeto `chacara-max`, mantendo o endereço `chacara-max.pages.dev`.
+O projeto `chacara-max` está conectado ao repositório `manu0916/chacara-max`, com a branch de produção `main`. O próprio Cloudflare compila e publica as alterações enviadas para essa branch.
 
-Para ativar, crie um token Cloudflare com a permissão **Account → Cloudflare Pages → Edit**, limitado à conta **Cogdev**. No GitHub, abra **Settings → Secrets and variables → Actions → New repository secret** e salve-o como **CLOUDFLARE_API_TOKEN**. Nunca inclua o valor no código ou em mensagens.
+Configuração de build do Pages:
+- Comando: `npm run build`.
+- Diretório de saída: `dist`.
+- Diretório raiz: raiz do repositório.
 
-Depois execute o workflow em **Actions → Verificar e publicar no Cloudflare → Run workflow**. As próximas alterações na branch `main` serão verificadas, compiladas e publicadas automaticamente. Pull requests executam somente as verificações e o build.
+O arquivo `wrangler.toml` define a saída e o banco D1; ele não contém `account_id`, pois a validação de configuração do Pages não aceita essa propriedade. O Cloudflare determina a conta pelo projeto conectado. Para deploy manual por CLI, use a conta autenticada no Wrangler ou a variável de ambiente `CLOUDFLARE_ACCOUNT_ID`.
 
-Sem o segredo, o workflow informa **Publicação pendente** e disponibiliza o pacote completo `chacara-max-pages-upload` como artefato. O deploy não é executado. Os segredos do admin e o binding D1 continuam no Cloudflare.
+O GitHub Actions executa somente testes, verificações e build, disponibilizando o pacote completo como artefato. A publicação automática é feita pela integração nativa do Cloudflare, sem exigir um token Cloudflare nos segredos do GitHub. Os segredos `ADMIN_PASSWORD`, `SESSION_SECRET` e o binding `DB` permanecem configurados no Pages.
 
 
 ## Senha e demonstração
