@@ -23,7 +23,7 @@ npm run build
 npm run deploy
 ```
 
-O build gera `dist/` com `index.html`, estilos, scripts, imagens, `_routes.json` e o Worker compilado `_worker.js`. O deploy usa esse diretório completo. Para Direct Upload pelo painel Cloudflare, envie o conteúdo de `dist/`, com `_worker.js` na raiz; a pasta `functions/` contém código-fonte e precisa ser compilada.
+O build copia os arquivos estáticos para `dist/`. A API permanece em `functions/`, na raiz do repositório, e é compilada automaticamente pelo Cloudflare Pages conectado ao Git ou pelo comando `wrangler pages deploy dist`. O comando `npm run check:functions` valida essa compilação separadamente.
 
 No Cloudflare Pages, mantenha o banco D1 no binding `DB` e os segredos `ADMIN_PASSWORD` e `SESSION_SECRET`. Os valores dos segredos são configurados no Cloudflare, nunca no repositório. A configuração do banco existente está em `wrangler.toml`. Não é necessário recriar o banco para corrigir a senha.
 
@@ -40,7 +40,7 @@ Configuração de build do Pages:
 
 O arquivo `wrangler.toml` define a saída e o banco D1; ele não contém `account_id`, pois a validação de configuração do Pages não aceita essa propriedade. O Cloudflare determina a conta pelo projeto conectado. Para deploy manual por CLI, use a conta autenticada no Wrangler ou a variável de ambiente `CLOUDFLARE_ACCOUNT_ID`.
 
-O GitHub Actions executa somente testes, verificações e build, disponibilizando o pacote completo como artefato. A publicação automática é feita pela integração nativa do Cloudflare, sem exigir um token Cloudflare nos segredos do GitHub. Os segredos `ADMIN_PASSWORD`, `SESSION_SECRET` e o binding `DB` permanecem configurados no Pages.
+O GitHub Actions executa testes, verificações da interface, compilação da API e build dos arquivos estáticos. A publicação automática é feita pela integração nativa do Cloudflare, sem exigir um token Cloudflare nos segredos do GitHub. Os segredos `ADMIN_PASSWORD`, `SESSION_SECRET` e o binding `DB` permanecem configurados no Pages.
 
 
 O guia detalhado está em [LEIA-ME.md](LEIA-ME.md).

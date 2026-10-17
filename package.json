@@ -8,7 +8,8 @@
     "deploy": "npm run build && wrangler pages deploy dist --project-name chacara-max --branch main",
     "test": "node --test tests/*.test.js",
     "check": "node scripts/check.mjs",
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "check:functions": "wrangler pages functions build functions --outdir=.deployment/functions"
   },
   "devDependencies": {
     "wrangler": "^4.149.0"

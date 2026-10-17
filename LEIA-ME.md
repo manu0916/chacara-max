@@ -7,7 +7,7 @@ O projeto contém o site, painel administrativo por senha, API do catálogo, fot
 - `public/`: interface do site e do painel.
 - `functions/` e `lib/`: API autenticada do Pages.
 - `migrations/`: estrutura do banco.
-- `dist/`: resultado gerado de publicação, incluindo `_worker.js` compilado e `_routes.json`.
+- `dist/`: arquivos estáticos preparados para publicação, incluindo `_routes.json`; a API é compilada a partir de `functions/` pelo Pages.
 
 ## Preparar o ambiente
 
@@ -39,7 +39,9 @@ npm run check
 npm run deploy
 ```
 
-O comando de deploy gera `dist/` antes de publicar. Para upload manual pelo painel, execute `npm run build` e envie o conteúdo inteiro de `dist/`. Verifique que `index.html`, `password-field.css`, `password-field.js`, `_worker.js` e `_routes.json` estão na raiz do upload. Não envie o código-fonte de `functions/` como se já estivesse compilado.
+O comando de deploy gera `dist/` antes de publicar. No deploy por Git, o Pages compila a pasta `functions/` da raiz do repositório e publica os arquivos estáticos de `dist/`. No deploy por CLI, o Wrangler também compila essa pasta automaticamente. Para validar a API isoladamente, use `npm run check:functions`.
+
+O upload manual somente dos arquivos estáticos pelo painel não inclui a API. Use a integração Git ou `npm run deploy` para publicar o projeto com o painel administrativo funcional.
 
 ## Publicação automática pelo Cloudflare Pages
 
@@ -52,7 +54,7 @@ Configuração de build do Pages:
 
 O arquivo `wrangler.toml` define a saída e o banco D1; ele não contém `account_id`, pois a validação de configuração do Pages não aceita essa propriedade. O Cloudflare determina a conta pelo projeto conectado. Para deploy manual por CLI, use a conta autenticada no Wrangler ou a variável de ambiente `CLOUDFLARE_ACCOUNT_ID`.
 
-O GitHub Actions executa somente testes, verificações e build, disponibilizando o pacote completo como artefato. A publicação automática é feita pela integração nativa do Cloudflare, sem exigir um token Cloudflare nos segredos do GitHub. Os segredos `ADMIN_PASSWORD`, `SESSION_SECRET` e o binding `DB` permanecem configurados no Pages.
+O GitHub Actions executa testes, verificações da interface, compilação da API e build dos arquivos estáticos. A publicação automática é feita pela integração nativa do Cloudflare, sem exigir um token Cloudflare nos segredos do GitHub. Os segredos `ADMIN_PASSWORD`, `SESSION_SECRET` e o binding `DB` permanecem configurados no Pages.
 
 
 ## Senha e demonstração

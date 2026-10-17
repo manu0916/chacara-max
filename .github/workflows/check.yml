@@ -23,11 +23,5 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run check
+      - run: npm run check:functions
       - run: npm run build
-      - name: Guardar pacote completo do Pages
-        uses: actions/upload-artifact@v4
-        with:
-          name: chacara-max-pages-upload
-          path: dist/
-          retention-days: 7
-          if-no-files-found: error
